@@ -22,10 +22,10 @@ export default function DashboardController() {
   const [open, setOpen] = React.useState(true);
 
   useEffect(() => {
-    onSelectMenu(Menu.member)
+    fetchMenu(Menu.member)
   }, [])
 
-  function onSelectMenu(currentMenu: Menu) {
+  function fetchMenu(currentMenu: Menu) {
     setLoading(true)
 
     get(child(dbRef, currentMenu))
@@ -84,5 +84,5 @@ export default function DashboardController() {
       .finally(() => setLoading(false))
   }
 
-  return <DashboardScreen open={open} loading={loading} model={model} onSelectMenu={onSelectMenu} onToggleDrawer={() => setOpen(!open)}/>;
+  return <DashboardScreen open={open} loading={loading} model={model} onSelectMenu={fetchMenu} onToggleDrawer={() => setOpen(!open)}/>;
 }

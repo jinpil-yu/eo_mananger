@@ -8,18 +8,18 @@ import Paper from "@mui/material/Paper";
 import * as React from "react";
 import {Notice} from "../../data/model/notice";
 import NoticeListComponent from "./NoticeListComponent";
-import {Member} from "../../data/model/member";
-import MemberSpecific from "../member/MemberSpecific";
 import NoticeSpecific from "./NoticeSpecific";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WriteNotice from "./WriteNotice";
+import {getDatabase, ref, child, remove} from "firebase/database";
+import {Menu} from "../dashboard/DashboardController";
 
 interface NoticeContentsProps {
   data: Notice[]
+  fetchMenu: (menu:Menu) => void
 }
 
-const NoticeContents: FC<NoticeContentsProps> = ({data}) => {
+const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
   const [depth, setDepth] = useState<string>('list')
   const [selected, setSelected] = useState<Notice | null | undefined>(null)
 
@@ -37,11 +37,33 @@ const NoticeContents: FC<NoticeContentsProps> = ({data}) => {
     setDepth('create')
   }
 
+  function onClickDelete() {
+    const db = getDatabase();
+    const dbRef = ref(db)
+
+    if (!selected) {
+      return alert('공지를 삭제할 수 없습니다. 공지를 다시 선택해주세요.')
+    }
+
+    console.log(selected)
+
+    remove(child(dbRef, `notice/${selected.uid}`))
+      .then(() => {
+        goFirst()
+        fetchMenu(Menu.notice)
+        alert('공지사항이 삭제되었습니다.')
+      })
+      .catch((reason) => {
+        console.error(reason)
+        alert('공지를 삭제하는 데 실패했습니다. 잠시 후 다시 시도해주세요.')
+      })
+  }
+
   function contentsProvider() {
     switch (depth) {
       case 'list': return <NoticeListComponent data={data} onClickRow={onClickRow}/>
       case 'specific': return <NoticeSpecific data={selected!} goBack={goFirst}/>
-      case 'create': return <WriteNotice goBack={goFirst} />
+      case 'create': return <WriteNotice goBack={goFirst} fetchMenu={fetchMenu} />
     }
   }
 
@@ -75,6 +97,7 @@ const NoticeContents: FC<NoticeContentsProps> = ({data}) => {
               startIcon={<DeleteIcon/>}
               type="submit"
               variant="contained"
+              onClick={onClickDelete}
             >
               삭제
             </Button>

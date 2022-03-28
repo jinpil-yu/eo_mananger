@@ -1,12 +1,11 @@
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, useState} from "react";
 import {Member} from "../../data/model/member";
 import Title from "../dashboard/Title";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {Dialog, IconButton, ImageList, ImageListItem, useMediaQuery} from "@mui/material";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import {Dialog, IconButton, useMediaQuery} from "@mui/material";
 import EoImageList, {EoImage} from "../common/ImageList";
 import {useTheme} from "@mui/material/styles";
 
@@ -21,7 +20,7 @@ const MemberSpecific: FC<MemberSpecificProps> = ({uid, data, goBack}) => {
   const [selectedImage, setSelectedImage] = useState<EoImage>({
     img: '', title: ''
   })
-  const [itemData, setItemData] = useState<EoImage[]>([{
+  const [itemData] = useState<EoImage[]>([{
     img: data.thumbnail,
     title: 'thumbnail'
   }])

@@ -3,8 +3,6 @@ import {Route, Routes, useNavigate} from 'react-router-dom';
 import DashboardController from "./ui/dashboard/DashboardController";
 import SignInSide from "./ui/login/SignInSide";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import MemberSpecific from "./ui/member/MemberSpecific";
-import NoticeSpecific from "./ui/notice/NoticeSpecific";
 
 function App() {
   const auth = getAuth();

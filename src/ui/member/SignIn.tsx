@@ -1,21 +1,21 @@
 import * as React from 'react';
+import {FC, useState} from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {IconButton, Slide, Snackbar} from "@mui/material";
-import {FC, useState} from "react";
 import Button from "@mui/material/Button";
 import {format} from "date-fns";
 import {getDatabase, ref, set} from "firebase/database";
-import {uuid} from "../../util/uuid";
 import {Member} from "../../data/model/member";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import firebase from "firebase/compat";
+import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 import Alert from "@mui/material/Alert";
+import {Menu} from "../dashboard/DashboardController";
 
 interface AddressFormProps {
   goBack: () => void
+  fetch: (menu:Menu) => void
 }
 
 interface AuthInfo {
@@ -29,7 +29,7 @@ interface EoError {
   message: string
 }
 
-const SignIn: FC<AddressFormProps> = ({goBack}) => {
+const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
   const [error, setError] = useState<EoError>({
     visible: false,
     message: "",
@@ -105,6 +105,9 @@ const SignIn: FC<AddressFormProps> = ({goBack}) => {
 
     set(ref(db, 'members/' + uid), param)
       .then(() => {
+        fetch(Menu.member)
+        alert('유저 생성이 완료되었습니다.')
+        goBack()
       }).catch((err) => {
       console.error(err)
     });

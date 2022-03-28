@@ -8,16 +8,18 @@ import Paper from "@mui/material/Paper";
 import * as React from "react";
 import {Member} from "../../data/model/member";
 import MemberListComponent from "./MemberListComponent";
-import EditIcon from '@mui/icons-material/Edit';
 import MemberSpecific from "./MemberSpecific";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SignIn from "./SignIn";
+import {child, getDatabase, ref, remove} from "firebase/database";
+import {Menu} from "../dashboard/DashboardController";
 
 interface MemberContentsProps {
   data: Member[]
+  fetch: (menu:Menu) => void
 }
 
-const MemberContents: FC<MemberContentsProps> = ({data}) => {
+const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
   const [depth, setDepth] = useState<string>('list')
   const [selected, setSelected] = useState<Member | null | undefined>(null)
 
@@ -34,12 +36,32 @@ const MemberContents: FC<MemberContentsProps> = ({data}) => {
     setDepth('create')
   }
 
+  function onClickDelete() {
+    const db = getDatabase();
+    const dbRef = ref(db)
+
+    if (!selected) {
+      return alert('유저를 삭제할 수 없습니다. 새로고침 후 다시 선택해주세요.')
+    }
+
+    remove(child(dbRef, `members/${selected.uid}`))
+      .then(() => {
+        fetch(Menu.member)
+        goFirst()
+        alert('유저가 삭제되었습니다.')
+      })
+      .catch((reason) => {
+        console.error(reason)
+        alert('유저를 삭제하는 데 실패했습니다. 잠시 후 다시 시도해주세요.')
+      })
+  }
+
   function contentsProvider() {
     switch (depth) {
       case 'list': return <MemberListComponent data={data} onClickRow={onClickRow}/>
       case 'specific': return <MemberSpecific uid={""} data={selected!} goBack={goFirst}/>
-      case 'create': return <SignIn goBack={goFirst} />
-      case 'update': return <SignIn goBack={goFirst}/>
+      case 'create': return <SignIn goBack={goFirst} fetch={fetch}/>
+      case 'update': return <></>
       case 'delete': return <></>
     }
   }
@@ -73,6 +95,7 @@ const MemberContents: FC<MemberContentsProps> = ({data}) => {
               startIcon={<DeleteIcon/>}
               type="submit"
               variant="contained"
+              onClick={onClickDelete}
             >
               삭제
             </Button>

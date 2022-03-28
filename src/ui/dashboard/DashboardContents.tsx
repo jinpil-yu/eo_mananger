@@ -111,16 +111,16 @@ const DashboardScreen: FC<DashboardScreenProps> = ({open,loading, model, onSelec
       return <EmptyPaper />
     }
 
-    return contentsProviderPerType(onClickRow)
+    return contentsProviderPerType()
   }
 
-  function contentsProviderPerType(onClickRow: ({to, param}:{to:string, param: { state: any }}) => void) {
+  function contentsProviderPerType() {
     if (model instanceof MemberList) {
-      return <MemberContents data={model.list} />
+      return <MemberContents data={model.list} fetch={onSelectMenu} />
     } else if (model instanceof NoticeList) {
-      return <NoticeContents data={model.list} />
+      return <NoticeContents data={model.list} fetchMenu={onSelectMenu} />
     } else if (model instanceof ScheduleList) {
-      return <ScheduleController data={model.list} />
+      return <ScheduleController data={model.list} fetch={onSelectMenu}/>
     } else if (model instanceof ContactList) {
       return <ContactController data={model.list} />
     }

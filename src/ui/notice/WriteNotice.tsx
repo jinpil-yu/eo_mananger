@@ -1,24 +1,26 @@
 import * as React from 'react';
+import {FC, useState} from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {IconButton, ImageList, ImageListItem} from "@mui/material";
-import {FC, useState} from "react";
 import Button from "@mui/material/Button";
 import * as Stroage from "firebase/storage"
-import { getDatabase, ref, set } from "firebase/database";
+import {getDatabase, ref, set} from "firebase/database";
 import {Notice} from "../../data/model/notice";
 import {format} from "date-fns";
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
 import {uuid} from "../../util/uuid";
 import AddIcon from '@mui/icons-material/Add';
+import {Menu} from "../dashboard/DashboardController";
 
 interface WriteNoticeProps {
   goBack: () => void
+  fetchMenu: (menu:Menu) => void
 }
 
-const WriteNotice: FC<WriteNoticeProps> = ({goBack}) => {
+const WriteNotice: FC<WriteNoticeProps> = ({goBack, fetchMenu}) => {
   const [newNotice, setNewNotice] = useState<Notice>({
     uid: '',
     title: '',
@@ -60,8 +62,9 @@ const WriteNotice: FC<WriteNoticeProps> = ({goBack}) => {
           const firstRef = Stroage.ref(storage, `/notice/${noticeUUID}/${index}.png`);
           Stroage.uploadBytes(firstRef, image.file as Blob, metadata)
         })
-
+        fetchMenu(Menu.notice)
         alert('공지사항 등록이 완료 되었습니다.')
+        goBack()
       }).catch((err) => {
         console.error(err)
       });

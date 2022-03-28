@@ -1,15 +1,13 @@
 import * as React from 'react';
+import {FC, useState} from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {IconButton, ImageList, ImageListItem} from "@mui/material";
-import {FC, useState} from "react";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhotoSharp';
 import {DateTimePicker, LocalizationProvider} from "@mui/lab";
 import Button from "@mui/material/Button";
-import AddSharpIcon from '@mui/icons-material/AddSharp';
 import {Schedule} from "../../data/model/schedule";
 import {format} from "date-fns";
 import {getDatabase, ref, set} from "firebase/database";
@@ -17,12 +15,14 @@ import {uuid} from "../../util/uuid";
 import * as Stroage from "firebase/storage";
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
 import AddIcon from "@mui/icons-material/Add";
+import {Menu} from "../dashboard/DashboardController";
 
 interface CreateScheduleProps {
   goBack: () => void
+  fetch: (menu: Menu) => void
 }
 
-const CreateSchedule: FC<CreateScheduleProps> = ({goBack}) => {
+const CreateSchedule: FC<CreateScheduleProps> = ({goBack, fetch}) => {
   const [newSchedule, setNewSchedule] = useState<Schedule>({
     uid: '',
     title: '',
@@ -63,6 +63,8 @@ const CreateSchedule: FC<CreateScheduleProps> = ({goBack}) => {
           Stroage.uploadBytes(firstRef, image.file as Blob, metadata)
         })
 
+        fetch(Menu.schedule)
+        goBack()
         alert('일정 등록이 완료 되었습니다.')
       }).catch((err) => {
       console.error(err)

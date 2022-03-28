@@ -70,7 +70,6 @@ const NoticeSpecific: FC<NoticeSpecificProps> = ({ data, goBack }) => {
     setOpen(true)
   }
 
-
   const handleClose = () => {
     setOpen(false);
   };

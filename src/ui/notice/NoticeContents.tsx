@@ -9,10 +9,12 @@ import * as React from "react";
 import {Notice} from "../../data/model/notice";
 import NoticeListComponent from "./NoticeListComponent";
 import NoticeSpecific from "./NoticeSpecific";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WriteNotice from "./WriteNotice";
 import {getDatabase, ref, child, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
+import NoticeEdit from "./NoticeEdit";
 
 interface NoticeContentsProps {
   data: Notice[]
@@ -33,8 +35,16 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
     setDepth('list')
   }
 
-  function onClickCreateBtn() {
+  function goSpecific() {
+    setDepth('specific')
+  }
+
+  function onClickCreate() {
     setDepth('create')
+  }
+
+  function onClickEdit() {
+    setDepth('edit')
   }
 
   function onClickDelete() {
@@ -64,6 +74,7 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
       case 'list': return <NoticeListComponent data={data} onClickRow={onClickRow}/>
       case 'specific': return <NoticeSpecific data={selected!} goBack={goFirst}/>
       case 'create': return <WriteNotice goBack={goFirst} fetchMenu={fetchMenu} />
+      case 'edit': return <NoticeEdit data={selected!} goBack={goSpecific} />
     }
   }
 
@@ -75,7 +86,7 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
             startIcon={<AddIcon/>}
             type="submit"
             variant="contained"
-            onClick={onClickCreateBtn}
+            onClick={onClickCreate}
           >
             공지 추가
           </Button>
@@ -84,14 +95,15 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
         return (
           <>
             {/*// TODO: 수정*/}
-            {/*<Button*/}
-            {/*  sx={{mr: 1}}*/}
-            {/*  startIcon={<EditIcon/>}*/}
-            {/*  type="submit"*/}
-            {/*  variant="contained"*/}
-            {/*>*/}
-            {/*  수정*/}
-            {/*</Button>*/}
+            <Button
+              sx={{mr: 1}}
+              startIcon={<EditIcon/>}
+              type="submit"
+              variant="contained"
+              onClick={onClickEdit}
+            >
+              수정
+            </Button>
             <Button
               color={'error'}
               startIcon={<DeleteIcon/>}

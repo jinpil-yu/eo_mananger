@@ -63,10 +63,10 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
     updateTime : "",
   })
 
-  function signIn(): Promise<string> {
+  function signIn({email, pw}: {email: string, pw: string}): Promise<string> {
     return new Promise<string>(((resolve, reject) => {
       const auth = getAuth();
-      createUserWithEmailAndPassword(auth, singInInfo.email, singInInfo.pw)
+      createUserWithEmailAndPassword(auth, email, pw)
         .then((userCredential) => {
           resolve(userCredential.user.uid)
         })
@@ -81,25 +81,25 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
     const db = getDatabase();
 
     const param = {
-      address : newMember.address,
-      birthDate : newMember.birthDate,
-      companyName : newMember.companyName,
-      companyPhone: newMember.companyPhone,
-      email : newMember.email,
-      forum : newMember.forum,
-      grade : newMember.grade,
-      jobField : newMember.jobField,
-      jobPosition : newMember.jobPosition,
-      name : newMember.name,
-      phone : newMember.phone,
+      address : newMember?.address ?? "",
+      birthDate : newMember?.birthDate ?? "",
+      companyName : newMember?.companyName ?? "",
+      companyPhone: newMember?.companyPhone ?? "",
+      email : newMember?.email ?? "",
+      forum : newMember?.forum ?? "",
+      grade : "platinum",
+      jobField : newMember?.jobField ?? "",
+      jobPosition : newMember?.jobPosition ?? "",
+      name : newMember?.name ?? "",
+      phone : newMember?.phone ?? "",
       secretary : {
-        name: newMember.secretary.name,
-        phone: newMember.secretary.phone,
-        email: newMember.secretary.email,
+        name: newMember.secretary?.name ?? "",
+        phone: newMember.secretary?.phone ?? "",
+        email: newMember.secretary?.email ?? "",
       },
-      sig : newMember.sig,
+      sig : newMember?.sig ?? "",
       status : 'active',
-      thumbnail : newMember.thumbnail,
+      thumbnail : newMember?.thumbnail ?? "",
       updateTime : now,
     }
 
@@ -130,7 +130,7 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
     if (jobField === "") { return alert("분야를 입력해주세요.")}
     if (jobPosition === "") { return alert("직책을 입력해주세요.")}
 
-    signIn()
+    signIn({email: email, pw: pw})
       .then((uid: string) => {
         register(uid)
       }).catch((err) => {

@@ -16,6 +16,7 @@ import * as Stroage from "firebase/storage";
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
 import AddIcon from "@mui/icons-material/Add";
 import {Menu} from "../dashboard/DashboardController";
+import { formatInTimeZone } from 'date-fns-tz';
 
 interface CreateScheduleProps {
   goBack: () => void
@@ -45,10 +46,16 @@ const CreateSchedule: FC<CreateScheduleProps> = ({goBack, fetch}) => {
     const db = getDatabase();
     const UUID = uuid()
 
+
+    const newDate = new Date(newSchedule.whenstart)
+
+    // const whenstart = formatInTimeZone(newDate, "Asia/Seoul","yyyy-MM-dd'T'hh:mm:ss.SSSxxx")
+    const whenstart = `${newDate.getFullYear()}-${newDate.getMonth() + 1 < 10 ? `0${newDate.getMonth() + 1}` : newDate.getMonth() + 1}-${newDate.getDate()}T${newDate.getHours() < 10 ? `0${newDate.getHours()}` : newDate.getHours()}:${newDate.getMinutes()}:00.000+09:00`
+
     const param = {
       title: newSchedule.title,
       body: newSchedule.body,
-      whenstart: newSchedule.whenstart,
+      whenstart: whenstart,
     }
 
     set(ref(db, 'schedules/' + UUID), param)
@@ -59,7 +66,7 @@ const CreateSchedule: FC<CreateScheduleProps> = ({goBack, fetch}) => {
         };
 
         images.forEach((image: ImageType, index: number) => {
-          const firstRef = Stroage.ref(storage, `/schedule/${UUID}/${index}.png`);
+          const firstRef = Stroage.ref(storage, `/schedule/${UUID}/${index}.jpg`);
           Stroage.uploadBytes(firstRef, image.file as Blob, metadata)
         })
 
@@ -84,12 +91,11 @@ const CreateSchedule: FC<CreateScheduleProps> = ({goBack, fetch}) => {
       return
     }
 
-    const whenstart = format(newValue!, "yyyy-MM-dd'T'hh:mm:ss.SSSxxx")
-
     setNewSchedule({
       ...newSchedule,
-      whenstart: whenstart
-    });  };
+      whenstart: newValue.toISOString()
+    });
+  };
 
   const handleBodyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewSchedule({

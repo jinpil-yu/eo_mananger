@@ -13,6 +13,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SignIn from "./SignIn";
 import {child, getDatabase, ref, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
+import DumpSignIn from "./DumpSignIn";
 
 interface MemberContentsProps {
   data: Member[]
@@ -36,6 +37,11 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
     setDepth('create')
   }
 
+  function onPressDumpBtn() {
+    setDepth('dump')
+  }
+
+
   function onClickDelete() {
     const db = getDatabase();
     const dbRef = ref(db)
@@ -43,6 +49,7 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
     if (!selected) {
       return alert('유저를 삭제할 수 없습니다. 새로고침 후 다시 선택해주세요.')
     }
+
 
     remove(child(dbRef, `members/${selected.uid}`))
       .then(() => {
@@ -61,7 +68,8 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
       case 'list': return <MemberListComponent data={data} onClickRow={onClickRow}/>
       case 'specific': return <MemberSpecific uid={""} data={selected!} goBack={goFirst}/>
       case 'create': return <SignIn goBack={goFirst} fetch={fetch}/>
-      case 'update': return <></>
+      case 'dump': return <DumpSignIn />
+      case 'update': return <SignIn goBack={goFirst} fetch={fetch}/>
       case 'delete': return <></>
     }
   }
@@ -70,26 +78,30 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
     switch (depth) {
       case 'list':
         return (
-          <Button
-            startIcon={<AddIcon/>}
-            type="submit"
-            variant="contained"
-            onClick={onPressCreateBtn}
-          >
-            회원 추가
-          </Button>
+          <>
+            <Button
+              startIcon={<AddIcon/>}
+              type="submit"
+              variant="contained"
+              onClick={onPressCreateBtn}
+            >
+              회원 추가
+            </Button>
+            <Button
+              startIcon={<AddIcon/>}
+              color="error"
+              sx={{ml: 1}}
+              type="submit"
+              variant="contained"
+              onClick={onPressDumpBtn}
+            >
+              CSV 파일로 추가
+            </Button>
+          </>
         )
       case 'specific':
         return (
           <>
-            {/*<Button*/}
-            {/*  sx={{mr: 1}}*/}
-            {/*  startIcon={<EditIcon/>}*/}
-            {/*  type="submit"*/}
-            {/*  variant="contained"*/}
-            {/*>*/}
-            {/*  수정*/}
-            {/*</Button>*/}
             <Button
               color={'error'}
               startIcon={<DeleteIcon/>}

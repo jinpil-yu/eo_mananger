@@ -99,12 +99,12 @@ const DashboardScreen: FC<DashboardScreenProps> = ({open,loading, model, onSelec
   };
 
   function getContents(onClickRow: ({to, param}:{to: string, param: { state: any }}) => void) {
-    if (!model) {
-      return <ErrorPaper /> // TODO: EMPTY
-    }
-
     if (loading) {
       return <LoadingPaper />
+    }
+
+    if (!model) {
+      return <ErrorPaper /> // TODO: EMPTY
     }
 
     if (model.list.length === 0) {

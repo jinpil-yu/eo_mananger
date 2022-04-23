@@ -14,6 +14,7 @@ interface MembersProps {
 }
 
 const MemberListComponent: FC<MembersProps> = ({data, onClickRow}) => {
+  console.log(data.length)
   return (
     <React.Fragment>
       <Title>Members</Title>

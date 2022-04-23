@@ -59,7 +59,7 @@ const WriteNotice: FC<WriteNoticeProps> = ({goBack, fetchMenu}) => {
         };
 
         images.forEach((image: ImageType, index: number) => {
-          const firstRef = Stroage.ref(storage, `/notice/${noticeUUID}/${index}.png`);
+          const firstRef = Stroage.ref(storage, `/notice/${noticeUUID}/${index}.jpg`);
           Stroage.uploadBytes(firstRef, image.file as Blob, metadata)
         })
         fetchMenu(Menu.notice)

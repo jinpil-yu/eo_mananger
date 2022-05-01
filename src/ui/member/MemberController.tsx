@@ -56,14 +56,25 @@ const MemberController: FC<MemberContentsProps> = ({data, fetch}) => {
   function onClickDeleteUser() {
     const db = getDatabase();
     const dbRef = ref(db)
+    const storage = Storage.getStorage();
+    const deleteSubRef = Storage.ref(storage, `/user/${selected?.uid}/sub.jpg`);
+    const deleteMainRef = Storage.ref(storage, `/user/${selected?.uid}/main.jpg`);
+
 
     if (!selected) {
       return alert('유저를 삭제할 수 없습니다. 새로고침 후 다시 선택해주세요.')
     }
 
-
     remove(child(dbRef, `members/${selected.uid}`))
       .then(() => {
+        deleteObject(deleteMainRef)
+          .catch((err) => {
+            console.error(err)
+          })
+        deleteObject(deleteSubRef)
+          .catch((err) => {
+            console.error(err)
+          })
         fetch(Menu.member)
         goFirst()
         alert('유저가 삭제되었습니다.')

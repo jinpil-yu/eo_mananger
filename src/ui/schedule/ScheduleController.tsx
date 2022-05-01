@@ -15,6 +15,8 @@ import ScheduleCreate from "./screen/CreateSchedule";
 import {child, getDatabase, ref, remove} from "firebase/database";
 import NoticeEdit from "../notice/screen/NoticeEdit";
 import ScheduleEdit from "./screen/ScheduleEdit";
+import * as Storage from "firebase/storage";
+import {deleteObject} from "firebase/storage";
 
 interface ScheduleControllerProps {
   data: Schedule[]
@@ -45,6 +47,10 @@ const ScheduleController: FC<ScheduleControllerProps> = ({data, fetch}) => {
   function onClickDelete() {
     const db = getDatabase();
     const dbRef = ref(db)
+    const storage = Storage.getStorage();
+    const firstRef = Storage.ref(storage, `/schedule/${selected?.uid}/0.jpg`);
+    const secondRef = Storage.ref(storage, `/schedule/${selected?.uid}/1.jpg`);
+    const thirdRef = Storage.ref(storage, `/schedule/${selected?.uid}/2.jpg`);
 
     if (!selected) {
       return alert('일정을 삭제할 수 없습니다. 새로고침 후에 다시 시도해주세요.')
@@ -52,6 +58,19 @@ const ScheduleController: FC<ScheduleControllerProps> = ({data, fetch}) => {
 
     remove(child(dbRef, `schedules/${selected.uid}`))
       .then(() => {
+        deleteObject(firstRef)
+          .catch((err) => {
+            console.error(err)
+          })
+        deleteObject(secondRef)
+          .catch((err) => {
+            console.error(err)
+          })
+        deleteObject(thirdRef)
+          .catch((err) => {
+            console.error(err)
+          })
+
         goFirst()
         fetch(Menu.schedule)
         alert('일정이 삭제되었습니다.')

@@ -15,6 +15,8 @@ import WriteNotice from "./screen/WriteNotice";
 import {getDatabase, ref, child, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
 import NoticeEdit from "./screen/NoticeEdit";
+import {deleteObject} from "firebase/storage";
+import * as Storage from "firebase/storage";
 
 interface NoticeContentsProps {
   data: Notice[]
@@ -50,6 +52,10 @@ const NoticeController: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
   function onClickDelete() {
     const db = getDatabase();
     const dbRef = ref(db)
+    const storage = Storage.getStorage();
+    const firstRef = Storage.ref(storage, `/notice/${selected?.uid}/0.jpg`);
+    const secondRef = Storage.ref(storage, `/notice/${selected?.uid}/1.jpg`);
+    const thirdRef = Storage.ref(storage, `/notice/${selected?.uid}/2.jpg`);
 
     if (!selected) {
       return alert('공지를 삭제할 수 없습니다. 공지를 다시 선택해주세요.')
@@ -57,6 +63,18 @@ const NoticeController: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
 
     remove(child(dbRef, `notice/${selected.uid}`))
       .then(() => {
+        deleteObject(firstRef)
+          .catch((err) => {
+            console.error(err)
+          })
+        deleteObject(secondRef)
+          .catch((err) => {
+            console.error(err)
+          })
+        deleteObject(thirdRef)
+          .catch((err) => {
+            console.error(err)
+          })
         goFirst()
         fetchMenu(Menu.notice)
         alert('공지사항이 삭제되었습니다.')

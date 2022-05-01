@@ -87,16 +87,16 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
             >
               회원 추가
             </Button>
-            <Button
-              startIcon={<AddIcon/>}
-              color="error"
-              sx={{ml: 1}}
-              type="submit"
-              variant="contained"
-              onClick={onPressDumpBtn}
-            >
-              CSV 파일로 추가
-            </Button>
+            {/*<Button*/}
+            {/*  startIcon={<AddIcon/>}*/}
+            {/*  color="error"*/}
+            {/*  sx={{ml: 1}}*/}
+            {/*  type="submit"*/}
+            {/*  variant="contained"*/}
+            {/*  onClick={onPressDumpBtn}*/}
+            {/*>*/}
+            {/*  CSV 파일로 추가*/}
+            {/*</Button>*/}
           </>
         )
       case 'specific':

@@ -15,6 +15,8 @@ import WriteNotice from "./WriteNotice";
 import {getDatabase, ref, child, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
 import NoticeEdit from "./NoticeEdit";
+import * as Stroage from "firebase/storage";
+import {deleteObject, getStorage} from "firebase/storage";
 
 interface NoticeContentsProps {
   data: Notice[]
@@ -74,7 +76,7 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
       case 'list': return <NoticeListComponent data={data} onClickRow={onClickRow}/>
       case 'specific': return <NoticeSpecific data={selected!} goBack={goFirst}/>
       case 'create': return <WriteNotice goBack={goFirst} fetchMenu={fetchMenu} />
-      case 'edit': return <NoticeEdit data={selected!} goBack={goSpecific} />
+      case 'edit': return <NoticeEdit data={selected!} goBack={goSpecific} fetchMenu={fetchMenu} />
     }
   }
 

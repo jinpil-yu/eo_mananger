@@ -59,6 +59,10 @@ const MemberSpecific: FC<MemberSpecificProps> = ({uid, data, goBack}) => {
       <EoImageList itemData={itemData} onClick={handleClickOpen}/>
       <Table size="medium">
         <TableRow>
+          <TableCell variant="head">UID&nbsp;</TableCell>
+          <TableCell width={500} align={'center'}>{data.uid ? data.uid : "-" }</TableCell>
+        </TableRow>
+        <TableRow>
           <TableCell variant="head">등급&nbsp;</TableCell>
           <TableCell width={500} align={'center'}>{data.grade ? data.grade : "-" }</TableCell>
         </TableRow>

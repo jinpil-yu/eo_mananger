@@ -15,6 +15,8 @@ import {child, getDatabase, ref, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
 import DumpSignIn from "./screen/DumpSignIn";
 import EditWholeUser from "./screen/EditWholeUser";
+import MemberEdit from "./screen/MemberEdit";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface MemberContentsProps {
   data: Member[]
@@ -68,13 +70,17 @@ const MemberController: FC<MemberContentsProps> = ({data, fetch}) => {
       })
   }
 
+  function onClickEdit() {
+    setDepth('edit')
+  }
+
   function contentsProvider() {
     switch (depth) {
       case 'list': return <MemberListComponent data={data} onClickRow={onClickRow}/>
       case 'specific': return <MemberSpecific uid={""} data={selected!} goBack={goFirst}/>
       case 'create': return <SignIn goBack={goFirst} fetch={fetch}/>
       case 'dump': return <DumpSignIn />
-      case 'update': return <SignIn goBack={goFirst} fetch={fetch}/>
+      case 'edit': return <MemberEdit selected={selected!} goBack={goFirst} fetch={fetch}/>
       case 'wholeUser': return <EditWholeUser goBack={goFirst} />
       case 'delete': return <></>
     }
@@ -118,6 +124,15 @@ const MemberController: FC<MemberContentsProps> = ({data, fetch}) => {
       case 'specific':
         return (
           <>
+            <Button
+              sx={{mr: 1}}
+              startIcon={<EditIcon/>}
+              type="submit"
+              variant="contained"
+              onClick={onClickEdit}
+            >
+              수정
+            </Button>
             <Button
               color={'error'}
               startIcon={<DeleteIcon/>}

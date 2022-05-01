@@ -7,21 +7,15 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {IconButton, Slide, Snackbar} from "@mui/material";
 import Button from "@mui/material/Button";
 import {format} from "date-fns";
-import {getDatabase, ref, set} from "firebase/database";
+import {getDatabase, ref, update} from "firebase/database";
 import {Member} from "../../../data/model/member";
-import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 import Alert from "@mui/material/Alert";
 import {Menu} from "../../dashboard/DashboardController";
 
 interface AddressFormProps {
+  selected: Member
   goBack: () => void
   fetch: (menu:Menu) => void
-}
-
-interface AuthInfo {
-  email: string
-  pw: string
-  pw2: string
 }
 
 interface EoError {
@@ -29,81 +23,41 @@ interface EoError {
   message: string
 }
 
-const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
+const MemberEdit: FC<AddressFormProps> = ({selected, goBack, fetch}) => {
   const [error, setError] = useState<EoError>({
     visible: false,
     message: "",
   })
-  const [singInInfo, setSingInInfo] = useState<AuthInfo>({
-    email: "",
-    pw: "",
-    pw2: "",
-  })
-  const [newMember, setNewMember] = useState<Member>({
-    uid: "",
-    address : "",
-    birthDate : "",
-    companyName : "",
-    companyPhone: "",
-    email : "",
-    forum : "",
-    grade : "",
-    jobField : "",
-    jobPosition : "",
-    name : "",
-    phone : "",
-    secretary : {
-      name: "",
-      phone: "",
-      email: "",
-    },
-    sig : "",
-    status : "",
-    thumbnail : "",
-    updateTime : "",
-  })
+  const [member, setMember] = useState<Member>(selected)
 
-  function signIn({email, pw}: {email: string, pw: string}): Promise<string> {
-    return new Promise<string>(((resolve, reject) => {
-      const auth = getAuth();
-      createUserWithEmailAndPassword(auth, email, pw)
-        .then((userCredential) => {
-          resolve(userCredential.user.uid)
-        })
-        .catch((error) => {
-          reject(error)
-        });
-    }))
-  }
-
-  function register(uid: string) {
+  function editDb(uid: string) {
     const now = format(new Date(), "yyyy-MM-dd'T'hh:mm:ss.SSSxxx")
     const db = getDatabase();
 
     const param = {
-      address : newMember?.address ?? "",
-      birthDate : newMember?.birthDate ?? "",
-      companyName : newMember?.companyName ?? "",
-      companyPhone: newMember?.companyPhone ?? "",
-      email : newMember?.email ?? "",
-      forum : newMember?.forum ?? "",
+      address : member?.address ?? "",
+      birthDate : member?.birthDate ?? "",
+      companyName : member?.companyName ?? "",
+      companyPhone: member?.companyPhone ?? "",
+      email : member?.email ?? "",
+      forum : member?.forum ?? "",
       grade : "korea",
-      jobField : newMember?.jobField ?? "",
-      jobPosition : newMember?.jobPosition ?? "",
-      name : newMember?.name ?? "",
-      phone : newMember?.phone ?? "",
+      jobField : member?.jobField ?? "",
+      jobPosition : member?.jobPosition ?? "",
+      name : member?.name ?? "",
+      phone : member?.phone ?? "",
       secretary : {
-        name: newMember.secretary?.name ?? "",
-        phone: newMember.secretary?.phone ?? "",
-        email: newMember.secretary?.email ?? "",
+        name: member.secretary?.name ?? "",
+        phone: member.secretary?.phone ?? "",
+        email: member.secretary?.email ?? "",
       },
-      sig : newMember?.sig ?? "",
+      sig : member?.sig ?? "",
       status : 'active',
-      thumbnail : newMember?.thumbnail ?? "",
+      thumbnail : member?.thumbnail ?? "",
       updateTime : now,
     }
-
-    set(ref(db, 'members/' + uid), param)
+    
+    update(ref(db, 'members/' + uid), param)
       .then(() => {
         fetch(Menu.member)
         alert('유저 생성이 완료되었습니다.')
@@ -114,134 +68,112 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
   }
 
   function handleSubmitCreate() {
-    const {email, pw, pw2} = singInInfo
-    const {name, phone, birthDate, address, forum, companyName, companyPhone, jobField, jobPosition } = newMember
+    const {uid, email, name, phone, birthDate, address, companyName, companyPhone, jobField, jobPosition } = member
+
+    console.log(member)
 
     if (email === "") { return alert("이메일을 입력해주세요") }
-    if (pw === "") { return alert("비밀번호를 입력해주세요.") }
-    if (pw !== pw2) { return alert("두 비밀번호가 일치하지 않습니다.") }
     if (name === "") { return alert("이름을 입력해주세요.") }
     if (phone === "") { return alert("전화번호를 입력해주세요.") }
     if (birthDate === "") { return alert("생년월일을 입력해주세요.") }
     if (address === "") { return alert("주소를 입력해주세요.") }
-    if (forum === "") { return alert("포럼을 입력해주세요.")}
     if (companyName === "") { return alert("회사명을 입력해주세요.")}
     if (companyPhone === "") { return alert("회사 전화번호를 입력해주세요.")}
     if (jobField === "") { return alert("분야를 입력해주세요.")}
     if (jobPosition === "") { return alert("직책을 입력해주세요.")}
 
-    signIn({email: email, pw: pw})
-      .then((uid: string) => {
-        register(uid)
-      }).catch((err) => {
-      setError({
-        visible: true,
-        message: err.message,
-      })
-    })
+    editDb(uid)
   }
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSingInInfo({
-      ...singInInfo,
-      email: event.target.value
-    });
-
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       email: event.target.value
     })
   };
-
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSingInInfo({
-      ...singInInfo,
-      pw: event.target.value
-    });
-  };
-  const handleSecondPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSingInInfo({
-      ...singInInfo,
-      pw2: event.target.value
-    });
-  };
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       address: event.target.value
     });
   };
   const handleBirthDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       birthDate: event.target.value
     });
   };
   const handleCompanyNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       companyName: event.target.value
     });
   };
   const handleCompanyPhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       companyPhone: event.target.value
     });
   };
   const handleForumChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       forum: event.target.value
     });
   };
+  const handleSIGChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMember({
+      ...member,
+      sig: event.target.value
+    })
+  }
   const handleJobFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       jobField: event.target.value
     });
   };
   const handleJobPositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       jobPosition: event.target.value
     });
   };
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       name: event.target.value
     });
   };
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       phone: event.target.value
     });
   };
   const handleSecretaryNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       secretary: {
-        ...newMember.secretary,
+        ...member.secretary,
         name: event.target.value
       }
     });
   };
   const handleSecretaryPhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       secretary: {
-        ...newMember.secretary,
+        ...member.secretary,
         phone: event.target.value
       }
     });
   };
   const handleSecretaryEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMember({
-      ...newMember,
+    setMember({
+      ...member,
       secretary: {
-        ...newMember.secretary,
+        ...member.secretary,
         email: event.target.value
       }
     });
@@ -277,11 +209,11 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
           variant="contained"
           onClick={handleSubmitCreate}
         >
-          생성
+          수정
         </Button>
       </Grid>
       <Typography variant="h6" gutterBottom>
-        회원 추가
+        회원 수정
       </Typography>
       <Typography mt={6} mb={3} color={'disabled'} variant="subtitle1"  gutterBottom>
         회원정보
@@ -298,38 +230,8 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="이메일"
             autoComplete={'email'}
             variant="standard"
+            value={member.email}
             onChange={handleEmailChange}
-          />
-        </Grid>
-        <Grid item xs={12} columns={2}>
-          <TextField
-            sx={{
-              width: 300
-            }}
-            type="password"
-            required
-            fullWidth
-            id="pw"
-            name="pw"
-            label="비밀번호 (6자리 이상, 영문 숫자 조합)"
-            autoComplete={'password'}
-            variant="standard"
-            onChange={handlePasswordChange}
-          />
-          <TextField
-            sx={{
-              ml: 5,
-              width: 300
-            }}
-            type="password"
-            required
-            fullWidth
-            id="pw"
-            name="pw"
-            label="비밀번호 재입력"
-            autoComplete={'password'}
-            variant="standard"
-            onChange={handleSecondPasswordChange}
           />
         </Grid>
         <Grid item xs={12} columns={2}>
@@ -344,6 +246,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="이름"
             autoComplete={'name'}
             variant="standard"
+            value={member.name}
             onChange={handleNameChange}
           />
         </Grid>
@@ -359,6 +262,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="전화번호 (000-0000-0000 형식으로)"
             autoComplete={'phone'}
             variant="standard"
+            value={member.phone}
             onChange={handlePhoneChange}
           />
         </Grid>
@@ -374,6 +278,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="생년월일"
             autoComplete={'birthDate'}
             variant="standard"
+            value={member.birthDate}
             onChange={handleBirthDateChange}
           />
         </Grid>
@@ -389,6 +294,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="주소"
             autoComplete={'address'}
             variant="standard"
+            value={member.address}
             onChange={handleAddressChange}
           />
         </Grid>
@@ -397,14 +303,28 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             sx={{
               width: 300
             }}
-            required
             fullWidth
             id="forum"
             name="forum"
             label="포럼"
             autoComplete={'forum'}
             variant="standard"
+            value={member.forum}
             onChange={handleForumChange}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            sx={{
+              width: 300
+            }}
+            fullWidth
+            id="forum"
+            name="forum"
+            label="SIG"
+            autoComplete={'forum'}
+            variant="standard"
+            onChange={handleSIGChange}
           />
         </Grid>
         <Grid item xs={12} sm={6} columns={2}>
@@ -419,6 +339,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="회사이름"
             autoComplete={'companyName'}
             variant="standard"
+            value={member.companyName}
             onChange={handleCompanyNameChange}
           />
           <TextField
@@ -426,13 +347,13 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
               width: 300,
               ml: 5
             }}
-            required
             fullWidth
             id="companyPhone"
             name="companyPhone"
             label="회사 전화번호"
             autoComplete={'companyPhone'}
             variant="standard"
+            value={member.companyPhone}
             onChange={handleCompanyPhoneChange}
           />
         </Grid>
@@ -448,6 +369,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="분야"
             autoComplete={'jobField'}
             variant="standard"
+            value={member.jobField}
             onChange={handleJobFieldChange}
           />
           <TextField
@@ -462,6 +384,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="직책"
             autoComplete={'jobPosition'}
             variant="standard"
+            value={member.jobPosition}
             onChange={handleJobPositionChange}
           />
         </Grid>
@@ -481,6 +404,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="이름"
             autoComplete={'securityName'}
             variant="standard"
+            value={member.secretary.name}
             onChange={handleSecretaryNameChange}
           />
           <TextField
@@ -494,6 +418,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="전화번호"
             autoComplete={'securityPhone'}
             variant="standard"
+            value={member.secretary.phone}
             onChange={handleSecretaryPhoneChange}
           />
         </Grid>
@@ -508,6 +433,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
             label="이메일"
             autoComplete={'securityEmail'}
             variant="standard"
+            value={member.secretary.email}
             onChange={handleSecretaryEmailChange}
           />
         </Grid>

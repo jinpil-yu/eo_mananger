@@ -44,6 +44,12 @@ export default function SignInSide() {
 
     const email = data.get('email')?.toString() ?? ""
     const password = data.get('password')?.toString() ?? ""
+    const isAdmin = email === "okchuns@htbeyond.com" || email === "chunbird@gmail.com" || email === "admin@eo.or.kr" || email === "yu861212@naver.com"
+
+    if (!isAdmin) {
+      setIsErr(true)
+      return
+    }
 
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {

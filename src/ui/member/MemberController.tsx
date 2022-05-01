@@ -11,12 +11,16 @@ import MemberListComponent from "./screen/MemberList";
 import MemberSpecific from "./screen/MemberSpecific";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SignIn from "./screen/SignIn";
-import {child, getDatabase, ref, remove} from "firebase/database";
+import {child, getDatabase, ref, remove, update} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
 import DumpSignIn from "./screen/DumpSignIn";
 import EditWholeUser from "./screen/EditWholeUser";
 import MemberEdit from "./screen/MemberEdit";
 import EditIcon from "@mui/icons-material/Edit";
+import HideImageIcon from '@mui/icons-material/HideImage';
+import * as Storage from "firebase/storage";
+import {deleteObject} from "firebase/storage";
+import {format} from "date-fns";
 
 interface MemberContentsProps {
   data: Member[]
@@ -49,7 +53,7 @@ const MemberController: FC<MemberContentsProps> = ({data, fetch}) => {
   }
 
 
-  function onClickDelete() {
+  function onClickDeleteUser() {
     const db = getDatabase();
     const dbRef = ref(db)
 
@@ -68,6 +72,56 @@ const MemberController: FC<MemberContentsProps> = ({data, fetch}) => {
         console.error(reason)
         alert('유저를 삭제하는 데 실패했습니다. 잠시 후 다시 시도해주세요.')
       })
+  }
+
+  function onClickDeleteProfileImage() {
+    const db = getDatabase();
+    const storage = Storage.getStorage();
+    const deleteSubRef = Storage.ref(storage, `/user/${selected?.uid}/sub.jpg`);
+    const deleteMainRef = Storage.ref(storage, `/user/${selected?.uid}/main.jpg`);
+
+    const now = format(new Date(), "yyyy-MM-dd'T'hh:mm:ss.SSSxxx")
+
+    const param = {
+      address : selected?.address ?? "",
+      birthDate : selected?.birthDate ?? "",
+      companyName : selected?.companyName ?? "",
+      companyPhone: selected?.companyPhone ?? "",
+      email : selected?.email ?? "",
+      forum : selected?.forum ?? "",
+      grade : "korea",
+      jobField : selected?.jobField ?? "",
+      jobPosition : selected?.jobPosition ?? "",
+      name : selected?.name ?? "",
+      phone : selected?.phone ?? "",
+      secretary : {
+        name: selected?.secretary?.name ?? "",
+        phone: selected?.secretary?.phone ?? "",
+        email: selected?.secretary?.email ?? "",
+      },
+      sig : selected?.sig ?? "",
+      status : 'active',
+      thumbnail : "",
+      updateTime : now,
+    }
+
+    update(ref(db, `members/${selected?.uid}`), param)
+      .then(() => {
+        deleteObject(deleteMainRef)
+          .catch((err) => {
+          console.error(err)
+        })
+        deleteObject(deleteSubRef)
+          .catch((err) => {
+          console.error(err)
+        })
+
+        fetch(Menu.member)
+        alert('프로필 이미지 삭제가 완료되었습니다.')
+        goFirst()
+      }).catch((err) => {
+      console.error(err)
+    });
   }
 
   function onClickEdit() {
@@ -134,11 +188,21 @@ const MemberController: FC<MemberContentsProps> = ({data, fetch}) => {
               수정
             </Button>
             <Button
+              sx={{mr: 1}}
+              color={'warning'}
+              startIcon={<HideImageIcon />}
+              type="submit"
+              variant="contained"
+              onClick={onClickDeleteProfileImage}
+            >
+              프로필 사진 삭제
+            </Button>
+            <Button
               color={'error'}
               startIcon={<DeleteIcon/>}
               type="submit"
               variant="contained"
-              onClick={onClickDelete}
+              onClick={onClickDeleteUser}
             >
               삭제
             </Button>

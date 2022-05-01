@@ -56,7 +56,7 @@ const MemberEdit: FC<AddressFormProps> = ({selected, goBack, fetch}) => {
       thumbnail : member?.thumbnail ?? "",
       updateTime : now,
     }
-    
+
     update(ref(db, 'members/' + uid), param)
       .then(() => {
         fetch(Menu.member)
@@ -78,7 +78,6 @@ const MemberEdit: FC<AddressFormProps> = ({selected, goBack, fetch}) => {
     if (birthDate === "") { return alert("생년월일을 입력해주세요.") }
     if (address === "") { return alert("주소를 입력해주세요.") }
     if (companyName === "") { return alert("회사명을 입력해주세요.")}
-    if (companyPhone === "") { return alert("회사 전화번호를 입력해주세요.")}
     if (jobField === "") { return alert("분야를 입력해주세요.")}
     if (jobPosition === "") { return alert("직책을 입력해주세요.")}
 

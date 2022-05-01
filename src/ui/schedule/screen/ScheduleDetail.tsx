@@ -84,6 +84,10 @@ const ScheduleDetail: FC<ScheduleDetailProps> = ({data, goBack}) => {
       </IconButton>
       <Table size="medium">
         <TableRow>
+          <TableCell variant="head" align={'center'}>UID&nbsp;</TableCell>
+          <TableCell align={'center'}>{data.uid}</TableCell>
+        </TableRow>
+        <TableRow>
           <TableCell variant="head" align={'center'}>일시&nbsp;</TableCell>
           <TableCell align={'center'}>{getDate(data.whenstart)}</TableCell>
         </TableRow>

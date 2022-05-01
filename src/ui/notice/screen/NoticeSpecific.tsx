@@ -82,6 +82,10 @@ const NoticeSpecific: FC<NoticeSpecificProps> = ({ data, goBack }) => {
       <Title>{data.title ? data.title : "-" }</Title>
       <Table size="medium">
         <TableRow>
+          <TableCell width={100} variant="head" align={'center'}>UID&nbsp;</TableCell>
+          <TableCell width={200} align={'center'}>{data.uid ? data.uid : "-" }</TableCell>
+        </TableRow>
+        <TableRow>
           <TableCell width={100} variant="head" align={'center'}>글쓴이&nbsp;</TableCell>
           <TableCell width={200} align={'center'}>{data.author ? data.author : "-" }</TableCell>
         </TableRow>

@@ -8,8 +8,8 @@ import * as React from "react";
 import ErrorPaper from "./ErrorPaper";
 import LoadingPaper from "./LoadingPaper";
 import EmptyPaper from "./EmptyPaper";
-import MemberContents from "../member/MemberContents";
-import NoticeContents from "../notice/NoticeContents";
+import MemberController from "../member/MemberController";
+import NoticeController from "../notice/NoticeController";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
@@ -116,13 +116,13 @@ const DashboardScreen: FC<DashboardScreenProps> = ({open,loading, model, onSelec
 
   function contentsProviderPerType() {
     if (model instanceof MemberList) {
-      return <MemberContents data={model.list} fetch={onSelectMenu} />
+      return <MemberController data={model.list} fetch={onSelectMenu} />
     } else if (model instanceof NoticeList) {
-      return <NoticeContents data={model.list} fetchMenu={onSelectMenu} />
+      return <NoticeController data={model.list} fetchMenu={onSelectMenu} />
     } else if (model instanceof ScheduleList) {
       return <ScheduleController data={model.list} fetch={onSelectMenu}/>
     } else if (model instanceof ContactList) {
-      return <ContactController data={model.list} />
+      return <ContactController data={model.list} fetch={onSelectMenu}/>
     }
   }
 

@@ -5,16 +5,16 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import {FC} from "react";
-import {Notice} from "../../data/model/notice";
-import Title from "../dashboard/Title";
-import {getDate} from "../../util/date";
+import {Notice} from "../../../data/model/notice";
+import Title from "../../dashboard/Title";
+import {getDate} from "../../../util/date";
 
 interface NoticeListComponentProps {
   data: Notice[]
   onClickRow: ({param}: {param: Notice}) => void
 }
 
-const NoticeListComponent: FC<NoticeListComponentProps> = ({data, onClickRow}) => {
+const NoticeList: FC<NoticeListComponentProps> = ({data, onClickRow}) => {
   return (
     <React.Fragment>
       <Title>Notice</Title>
@@ -43,4 +43,4 @@ const NoticeListComponent: FC<NoticeListComponentProps> = ({data, onClickRow}) =
   );
 }
 
-export default NoticeListComponent
+export default NoticeList

@@ -4,17 +4,16 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Title from '../dashboard/Title';
+import Title from '../../dashboard/Title';
 import {FC} from "react";
-import {Member} from "../../data/model/member";
+import {Member} from "../../../data/model/member";
 
 interface MembersProps {
   data: Member[]
   onClickRow: ({param}: {param: Member}) => void
 }
 
-const MemberListComponent: FC<MembersProps> = ({data, onClickRow}) => {
-  console.log(data.length)
+const MemberList: FC<MembersProps> = ({data, onClickRow}) => {
   return (
     <React.Fragment>
       <Title>Members</Title>
@@ -50,4 +49,4 @@ const MemberListComponent: FC<MembersProps> = ({data, onClickRow}) => {
   );
 }
 
-export default MemberListComponent
+export default MemberList

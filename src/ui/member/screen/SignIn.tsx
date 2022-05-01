@@ -8,10 +8,10 @@ import {IconButton, Slide, Snackbar} from "@mui/material";
 import Button from "@mui/material/Button";
 import {format} from "date-fns";
 import {getDatabase, ref, set} from "firebase/database";
-import {Member} from "../../data/model/member";
+import {Member} from "../../../data/model/member";
 import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 import Alert from "@mui/material/Alert";
-import {Menu} from "../dashboard/DashboardController";
+import {Menu} from "../../dashboard/DashboardController";
 
 interface AddressFormProps {
   goBack: () => void
@@ -87,7 +87,7 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
       companyPhone: newMember?.companyPhone ?? "",
       email : newMember?.email ?? "",
       forum : newMember?.forum ?? "",
-      grade : "platinum",
+      grade : "korea",
       jobField : newMember?.jobField ?? "",
       jobPosition : newMember?.jobPosition ?? "",
       name : newMember?.name ?? "",
@@ -115,7 +115,7 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
 
   function handleSubmitCreate() {
     const {email, pw, pw2} = singInInfo
-    const {name, phone, birthDate, address, forum, companyName, companyPhone, jobField, jobPosition } = newMember
+    const {name, phone, birthDate, address, companyName, companyPhone, jobField, jobPosition } = newMember
 
     if (email === "") { return alert("이메일을 입력해주세요") }
     if (pw === "") { return alert("비밀번호를 입력해주세요.") }
@@ -124,7 +124,6 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
     if (phone === "") { return alert("전화번호를 입력해주세요.") }
     if (birthDate === "") { return alert("생년월일을 입력해주세요.") }
     if (address === "") { return alert("주소를 입력해주세요.") }
-    if (forum === "") { return alert("포럼을 입력해주세요.")}
     if (companyName === "") { return alert("회사명을 입력해주세요.")}
     if (companyPhone === "") { return alert("회사 전화번호를 입력해주세요.")}
     if (jobField === "") { return alert("분야를 입력해주세요.")}
@@ -193,6 +192,12 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
     setNewMember({
       ...newMember,
       forum: event.target.value
+    });
+  };
+  const handleSIGChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMember({
+      ...newMember,
+      sig: event.target.value
     });
   };
   const handleJobFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -397,7 +402,6 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
             sx={{
               width: 300
             }}
-            required
             fullWidth
             id="forum"
             name="forum"
@@ -405,6 +409,20 @@ const SignIn: FC<AddressFormProps> = ({goBack, fetch}) => {
             autoComplete={'forum'}
             variant="standard"
             onChange={handleForumChange}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            sx={{
+              width: 300
+            }}
+            fullWidth
+            id="forum"
+            name="forum"
+            label="SIG"
+            autoComplete={'forum'}
+            variant="standard"
+            onChange={handleSIGChange}
           />
         </Grid>
         <Grid item xs={12} sm={6} columns={2}>

@@ -11,15 +11,15 @@ import {
   useMediaQuery
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Title from "../dashboard/Title";
+import Title from "../../dashboard/Title";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import {Notice} from "../../data/model/notice";
-import {getDate} from "../../util/date";
+import {Notice} from "../../../data/model/notice";
+import {getDate} from "../../../util/date";
 import {getStorage, getDownloadURL,ref, listAll} from "firebase/storage";
 import {useTheme} from "@mui/material/styles";
-import EoImageList from "../common/ImageList";
+import EoImageList from "../../common/ImageList";
 
 interface NoticeSpecificProps {
   data: Notice

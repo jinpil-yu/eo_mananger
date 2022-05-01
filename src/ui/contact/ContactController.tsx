@@ -1,20 +1,55 @@
 import React, {FC, useState} from 'react'
 import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import {Contact} from "../../data/model/contact";
 import ContactDetail from "./ContactDetail";
+import ContactEdit from "./ContactEdit";
+import {Menu} from "../dashboard/DashboardController";
 
 interface ContactControllerProps {
   data: Contact[]
+  fetch: (menu: Menu) => void
 }
 
-const ContactController: FC<ContactControllerProps> = ({data}) => {
+const ContactController: FC<ContactControllerProps> = ({data, fetch}) => {
+  const [depth, setDepth] = useState<string>('list')
+
+  function onClickEdit() {
+    setDepth('edit')
+  }
+
+  function goFirst() {
+    setDepth('list')
+  }
+
+  function functionalButtonProvider() {
+    switch (depth) {
+      case 'list': return (
+        <Button
+          sx={{mr: 1}}
+          startIcon={<EditIcon/>}
+          type="submit"
+          variant="contained"
+          onClick={onClickEdit}
+        >
+          수정
+        </Button>
+      )
+      case 'edit': <></>
+    }
+  }
+
+  function contentsProvider() {
+    switch (depth) {
+      case 'list': return <ContactDetail data={data[0]} />
+      case 'edit': return <ContactEdit data={data[0]} goBack={goFirst} fetch={fetch}/>
+    }
+  }
+
   return (
     <>
       <Toolbar/>
@@ -28,17 +63,10 @@ const ContactController: FC<ContactControllerProps> = ({data}) => {
               alignItems="center"
               sx={{mb: 3}}
             >
-              <Button
-                sx={{mr: 1}}
-                startIcon={<EditIcon/>}
-                type="submit"
-                variant="contained"
-              >
-                수정
-              </Button>
+              {functionalButtonProvider()}
             </Grid>
             <Paper sx={{width: '100%', p: 5, flexDirection: 'column'}}>
-              <ContactDetail data={data[0]} />
+              {contentsProvider()}
             </Paper>
           </Grid>
         </Grid>

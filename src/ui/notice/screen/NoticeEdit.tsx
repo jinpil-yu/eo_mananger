@@ -1,20 +1,18 @@
 import React, {FC, useEffect, useState} from 'react'
-import { Notice } from '../../data/model/notice'
+import { Notice } from '../../../data/model/notice'
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
 import Grid from "@mui/material/Grid";
-import {IconButton, ImageList, ImageListItem} from "@mui/material";
+import {IconButton, ImageList, ImageListItem, Typography} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import AddIcon from "@mui/icons-material/Add";
 import {getStorage, getDownloadURL,ref, listAll, deleteObject} from "firebase/storage";
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import {format} from "date-fns";
 import * as DB from "firebase/database";
-import * as Stroage from "firebase/storage";
-import {Menu} from "../dashboard/DashboardController";
+import * as Storage from "firebase/storage";
+import {Menu} from "../../dashboard/DashboardController";
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddPhoto from '../../common/AddPhoto';
 
 interface NoticeEditProps {
   data: Notice
@@ -86,14 +84,14 @@ const NoticeEdit: FC<NoticeEditProps> = ({data, goBack, fetchMenu}) => {
 
     DB.update(DB.ref(db), updates)
       .then(() => {
-        const storage = Stroage.getStorage();
+        const storage = Storage.getStorage();
         const metadata = {
           contentType: 'image/jpeg',
         };
 
         if (preImages.length === 0 && deleteImages.length > 0) {
           deleteImages.forEach((item) => {
-            const deleteRef = Stroage.ref(storage, `/notice/${newNotice.uid}/${item}.jpg`);
+            const deleteRef = Storage.ref(storage, `/notice/${newNotice.uid}/${item}.jpg`);
             deleteObject(deleteRef)
               .then(() => {
                 fetchMenu(Menu.notice)
@@ -108,8 +106,8 @@ const NoticeEdit: FC<NoticeEditProps> = ({data, goBack, fetchMenu}) => {
           if (!image.file) {
             return
           }
-          const firstRef = Stroage.ref(storage, `/notice/${newNotice.uid}/${index}.jpg`);
-          Stroage.uploadBytes(firstRef, image.file as Blob, metadata)
+          const firstRef = Storage.ref(storage, `/notice/${newNotice.uid}/${index}.jpg`);
+          Storage.uploadBytes(firstRef, image.file as Blob, metadata)
         })
         fetchMenu(Menu.notice)
         alert('공지사항 수정이 완료 되었습니다.')
@@ -135,7 +133,6 @@ const NoticeEdit: FC<NoticeEditProps> = ({data, goBack, fetchMenu}) => {
   const handleImageChange = (imageList: ImageListType, addUpdateIndex: number[] | undefined) => {
     const newImage = preImages
     const insertIndex = preImages.length < selectedIndex ? preImages.length : selectedIndex
-    console.log(insertIndex)
     newImage[insertIndex] = imageList[0]
     setPreImages([...newImage]);
   };
@@ -143,114 +140,6 @@ const NoticeEdit: FC<NoticeEditProps> = ({data, goBack, fetchMenu}) => {
   const handleImageClick = (index: number, onImageUpload: () => void) => {
     setSelectedIndex(index)
     onImageUpload()
-  }
-
-  const selectImageType = (image: any) => {
-    if (!image) {
-      return "NONE"
-    }
-
-    if (image?.file) {
-      return "LOCAL"
-    }
-
-    if (image?.title) {
-     return "CLOUD"
-    }
-
-    return "ERROR"
-  }
-
-  const UploadedImage = ({image, index}: {image: any, index: number}) => {
-    return (
-      <img
-        style={{
-          width: 'auto',
-          maxWidth: 230,
-          height: '100%',
-        }}
-        src={`${image.dataURL}`}
-        alt={`${index}`}
-        loading="lazy"
-      />
-    )
-  }
-
-  const AddPhoto = ({image, index, onClick}:{image: any, index: number, onClick: (index: number) => void }) => {
-    const imageType = selectImageType(image)
-
-    switch (imageType) {
-      case "NONE":
-        return (
-            <Grid
-              item
-              alignItems={'center'}
-              justifyContent="center"
-              width={230}
-              height={230}
-              padding={8}
-              sx={{
-                border: '2px solid',
-                borderColor: '#999999'
-              }}
-              onClick={() => onClick(index)}
-            >
-              <AddIcon color='action' sx={{width: '100%', height: '100%'}}/>
-            </Grid>
-        )
-      case "LOCAL":
-        return (
-          <Grid
-            item
-            alignItems={'center'}
-            justifyContent="center"
-            width={230}
-            height={230}
-            sx={{
-              border: '2px solid',
-              borderColor: '#999999'
-            }}
-            onClick={() => onClick(index)}
-          >
-            <UploadedImage image={image} index={index} />
-          </Grid>
-        )
-      case "CLOUD":
-        return (
-          <Grid
-            item
-            alignItems={'center'}
-            justifyContent="center"
-            width={230}
-            height={230}
-            sx={{
-              border: '2px solid',
-              borderColor: '#999999'
-            }}
-            onClick={() => onClick(index)}
-          >
-            <UploadedImage image={image} index={index} />
-          </Grid>
-        )
-      case "ERROR":
-        return (
-          <Grid
-            item
-            alignItems={'center'}
-            justifyContent="center"
-            width={230}
-            height={230}
-            padding={8}
-            sx={{
-              border: '2px solid',
-              borderColor: '#999999'
-            }}
-            onClick={() => onClick(index)}
-          >
-            <ErrorOutlineIcon color='action' sx={{width: '100%', height: '100%'}}/>
-          </Grid>
-        )
-    }
   }
 
   return (
@@ -312,6 +201,23 @@ const NoticeEdit: FC<NoticeEditProps> = ({data, goBack, fetchMenu}) => {
       <Typography mt={4} mb={1} variant="subtitle1"  gutterBottom fontWeight={'400'}>
         이미지 (최대 3장)
       </Typography>
+      <Grid container>
+        <Button
+          startIcon={<DeleteIcon />}
+          variant="contained"
+          onClick={() => {
+            if (preImages.length < 1) {
+              return
+            }
+
+            const deleteIndex = ['0', '1', '2']
+            setDeleteImages(deleteIndex)
+            setPreImages([])
+          }}
+        >
+          전체 사진 삭제
+        </Button>
+      </Grid>
       <Grid spacing={100} direction={'row'}>
         <ImageUploading
           multiple
@@ -335,77 +241,6 @@ const NoticeEdit: FC<NoticeEditProps> = ({data, goBack, fetchMenu}) => {
             </ImageList>
           )}
         </ImageUploading>
-      </Grid>
-      <Grid
-        container
-        justifyContent="center"
-      >
-        <Grid item xs={4}>
-          <Button
-            style={{
-              marginLeft: 42,
-            }}
-            startIcon={<DeleteIcon />}
-            variant="contained"
-            onClick={() => {
-              if (preImages.length < 1) {
-                return
-              }
-
-              const removed = preImages.splice(0, 0)
-              deleteImages.push('0')
-              console.log(deleteImages)
-              setDeleteImages([...deleteImages])
-              setPreImages([...removed])
-            }}
-          >
-          첫번째 사진 삭제
-          </Button>
-        </Grid>
-        <Grid item xs={4} justifyContent={'center'}>
-          <Button
-            style={{
-              marginLeft: 43,
-            }}
-            startIcon={<DeleteIcon />}
-            variant="contained"
-            onClick={() => {
-              if (preImages.length < 2) {
-                return
-              }
-
-              const removed = preImages.splice(1, 0)
-              deleteImages.push('1')
-              console.log(deleteImages)
-              setDeleteImages([...deleteImages])
-              setPreImages([...removed])
-            }}
-          >
-            두번째 사진 삭제
-          </Button>
-        </Grid>
-        <Grid item xs={4}>
-          <Button
-            style={{
-              marginLeft: 45,
-            }}
-            startIcon={<DeleteIcon />}
-            variant="contained"
-            onClick={() => {
-              if (preImages.length < 3) {
-                return
-              }
-
-              const removed = preImages.splice(2, 0)
-              deleteImages.push('2')
-              console.log(deleteImages)
-              setDeleteImages([...deleteImages])
-              setPreImages([...removed])
-            }}
-          >
-            세번째 사진 삭제
-          </Button>
-        </Grid>
       </Grid>
     </React.Fragment>
   )

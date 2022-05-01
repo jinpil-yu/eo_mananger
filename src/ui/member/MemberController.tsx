@@ -7,20 +7,21 @@ import AddIcon from "@mui/icons-material/Add";
 import Paper from "@mui/material/Paper";
 import * as React from "react";
 import {Member} from "../../data/model/member";
-import MemberListComponent from "./MemberListComponent";
-import MemberSpecific from "./MemberSpecific";
+import MemberListComponent from "./screen/MemberList";
+import MemberSpecific from "./screen/MemberSpecific";
 import DeleteIcon from '@mui/icons-material/Delete';
-import SignIn from "./SignIn";
+import SignIn from "./screen/SignIn";
 import {child, getDatabase, ref, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
-import DumpSignIn from "./DumpSignIn";
+import DumpSignIn from "./screen/DumpSignIn";
+import EditWholeUser from "./screen/EditWholeUser";
 
 interface MemberContentsProps {
   data: Member[]
   fetch: (menu:Menu) => void
 }
 
-const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
+const MemberController: FC<MemberContentsProps> = ({data, fetch}) => {
   const [depth, setDepth] = useState<string>('list')
   const [selected, setSelected] = useState<Member | null | undefined>(null)
 
@@ -39,6 +40,10 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
 
   function onPressDumpBtn() {
     setDepth('dump')
+  }
+
+  function onPressEditWholeUserField() {
+    setDepth('wholeUser')
   }
 
 
@@ -70,6 +75,7 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
       case 'create': return <SignIn goBack={goFirst} fetch={fetch}/>
       case 'dump': return <DumpSignIn />
       case 'update': return <SignIn goBack={goFirst} fetch={fetch}/>
+      case 'wholeUser': return <EditWholeUser goBack={goFirst} />
       case 'delete': return <></>
     }
   }
@@ -96,6 +102,16 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
             {/*  onClick={onPressDumpBtn}*/}
             {/*>*/}
             {/*  CSV 파일로 추가*/}
+            {/*</Button>*/}
+            {/*<Button*/}
+            {/*  startIcon={<AddIcon/>}*/}
+            {/*  color="error"*/}
+            {/*  sx={{ml: 1}}*/}
+            {/*  type="submit"*/}
+            {/*  variant="contained"*/}
+            {/*  onClick={onPressEditWholeUserField}*/}
+            {/*>*/}
+            {/*  전체 유저 필드 수정*/}
             {/*</Button>*/}
           </>
         )
@@ -142,4 +158,4 @@ const MemberContents: FC<MemberContentsProps> = ({data, fetch}) => {
   )
 }
 
-export default MemberContents
+export default MemberController

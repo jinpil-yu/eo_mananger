@@ -1,12 +1,12 @@
 import React, {FC, useState} from "react";
-import {Member} from "../../data/model/member";
-import Title from "../dashboard/Title";
+import {Member} from "../../../data/model/member";
+import Title from "../../dashboard/Title";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {Dialog, IconButton, useMediaQuery} from "@mui/material";
-import EoImageList, {EoImage} from "../common/ImageList";
+import EoImageList, {EoImage} from "../../common/ImageList";
 import {useTheme} from "@mui/material/styles";
 
 interface MemberSpecificProps {
@@ -93,6 +93,10 @@ const MemberSpecific: FC<MemberSpecificProps> = ({uid, data, goBack}) => {
         <TableRow>
           <TableCell variant="head">포럼&nbsp;</TableCell>
           <TableCell width={500} align={'center'}>{data.forum ? data.forum : "-" }</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell variant="head">SIG&nbsp;</TableCell>
+          <TableCell width={500} align={'center'}>{data.sig ? data.sig : "-" }</TableCell>
         </TableRow>
         <TableRow>
           <TableCell variant="head">휴면&nbsp;</TableCell>

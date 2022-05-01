@@ -7,23 +7,21 @@ import AddIcon from "@mui/icons-material/Add";
 import Paper from "@mui/material/Paper";
 import * as React from "react";
 import {Notice} from "../../data/model/notice";
-import NoticeListComponent from "./NoticeListComponent";
-import NoticeSpecific from "./NoticeSpecific";
+import NoticeList from "./screen/NoticeList";
+import NoticeSpecific from "./screen/NoticeSpecific";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import WriteNotice from "./WriteNotice";
+import WriteNotice from "./screen/WriteNotice";
 import {getDatabase, ref, child, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
-import NoticeEdit from "./NoticeEdit";
-import * as Stroage from "firebase/storage";
-import {deleteObject, getStorage} from "firebase/storage";
+import NoticeEdit from "./screen/NoticeEdit";
 
 interface NoticeContentsProps {
   data: Notice[]
   fetchMenu: (menu:Menu) => void
 }
 
-const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
+const NoticeController: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
   const [depth, setDepth] = useState<string>('list')
   const [selected, setSelected] = useState<Notice | null | undefined>(null)
 
@@ -57,8 +55,6 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
       return alert('공지를 삭제할 수 없습니다. 공지를 다시 선택해주세요.')
     }
 
-    console.log(selected)
-
     remove(child(dbRef, `notice/${selected.uid}`))
       .then(() => {
         goFirst()
@@ -73,7 +69,7 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
 
   function contentsProvider() {
     switch (depth) {
-      case 'list': return <NoticeListComponent data={data} onClickRow={onClickRow}/>
+      case 'list': return <NoticeList data={data} onClickRow={onClickRow}/>
       case 'specific': return <NoticeSpecific data={selected!} goBack={goFirst}/>
       case 'create': return <WriteNotice goBack={goFirst} fetchMenu={fetchMenu} />
       case 'edit': return <NoticeEdit data={selected!} goBack={goSpecific} fetchMenu={fetchMenu} />
@@ -146,4 +142,4 @@ const NoticeContents: FC<NoticeContentsProps> = ({data, fetchMenu}) => {
   )
 }
 
-export default NoticeContents
+export default NoticeController

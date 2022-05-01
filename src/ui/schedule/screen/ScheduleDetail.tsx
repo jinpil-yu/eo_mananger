@@ -1,13 +1,13 @@
 import React, {FC, useEffect, useState} from 'react'
-import {Schedule} from '../../data/model/schedule'
+import {Schedule} from '../../../data/model/schedule'
 import {Dialog, IconButton, useMediaQuery} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import {getDate} from "../../util/date";
+import {getDate} from "../../../util/date";
 import {useTheme} from "@mui/material/styles";
-import EoImageList, {EoImage} from "../common/ImageList";
+import EoImageList, {EoImage} from "../../common/ImageList";
 import {getDownloadURL, getStorage, listAll, ref} from "firebase/storage";
 
 interface ScheduleDetailProps {

@@ -15,8 +15,9 @@ interface ScheduleListProps {
   onClickRow: ({param}: {param: Schedule}) => void
 }
 
-const ScheduleListComponent: FC<ScheduleListProps> = ({data, onClickRow}) => {
+const ScheduleList: FC<ScheduleListProps> = ({data, onClickRow}) => {
   function getDate(strDate: string): string {
+    console.log(strDate)
     return format(new Date(strDate), "yyyy년 MM월 dd일 HH시 mm분")
   }
 
@@ -48,4 +49,4 @@ const ScheduleListComponent: FC<ScheduleListProps> = ({data, onClickRow}) => {
   );
 }
 
-export default ScheduleListComponent
+export default ScheduleList

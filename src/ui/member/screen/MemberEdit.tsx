@@ -8,10 +8,10 @@ import {IconButton, Slide, Snackbar} from "@mui/material";
 import Button from "@mui/material/Button";
 import {format} from "date-fns";
 import {getDatabase, ref, set} from "firebase/database";
-import {Member} from "../../data/model/member";
+import {Member} from "../../../data/model/member";
 import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 import Alert from "@mui/material/Alert";
-import {Menu} from "../dashboard/DashboardController";
+import {Menu} from "../../dashboard/DashboardController";
 
 interface AddressFormProps {
   goBack: () => void
@@ -87,7 +87,7 @@ const MemberEdit: FC<AddressFormProps> = ({goBack, fetch}) => {
       companyPhone: newMember?.companyPhone ?? "",
       email : newMember?.email ?? "",
       forum : newMember?.forum ?? "",
-      grade : "platinum",
+      grade : "korea",
       jobField : newMember?.jobField ?? "",
       jobPosition : newMember?.jobPosition ?? "",
       name : newMember?.name ?? "",

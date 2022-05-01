@@ -8,12 +8,12 @@ import {IconButton, ImageList, ImageListItem} from "@mui/material";
 import Button from "@mui/material/Button";
 import * as Stroage from "firebase/storage"
 import {getDatabase, ref, set} from "firebase/database";
-import {Notice} from "../../data/model/notice";
+import {Notice} from "../../../data/model/notice";
 import {format} from "date-fns";
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
-import {uuid} from "../../util/uuid";
+import {uuid} from "../../../util/uuid";
 import AddIcon from '@mui/icons-material/Add';
-import {Menu} from "../dashboard/DashboardController";
+import {Menu} from "../../dashboard/DashboardController";
 
 interface WriteNoticeProps {
   goBack: () => void

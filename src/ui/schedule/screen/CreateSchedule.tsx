@@ -8,14 +8,14 @@ import {IconButton, ImageList, ImageListItem} from "@mui/material";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import {DateTimePicker, LocalizationProvider} from "@mui/lab";
 import Button from "@mui/material/Button";
-import {Schedule} from "../../data/model/schedule";
+import {Schedule} from "../../../data/model/schedule";
 import {format} from "date-fns";
 import {getDatabase, ref, set} from "firebase/database";
-import {uuid} from "../../util/uuid";
+import {uuid} from "../../../util/uuid";
 import * as Stroage from "firebase/storage";
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
 import AddIcon from "@mui/icons-material/Add";
-import {Menu} from "../dashboard/DashboardController";
+import {Menu} from "../../dashboard/DashboardController";
 import { formatInTimeZone } from 'date-fns-tz';
 
 interface CreateScheduleProps {
@@ -49,8 +49,7 @@ const CreateSchedule: FC<CreateScheduleProps> = ({goBack, fetch}) => {
 
     const newDate = new Date(newSchedule.whenstart)
 
-    // const whenstart = formatInTimeZone(newDate, "Asia/Seoul","yyyy-MM-dd'T'hh:mm:ss.SSSxxx")
-    const whenstart = `${newDate.getFullYear()}-${newDate.getMonth() + 1 < 10 ? `0${newDate.getMonth() + 1}` : newDate.getMonth() + 1}-${newDate.getDate()}T${newDate.getHours() < 10 ? `0${newDate.getHours()}` : newDate.getHours()}:${newDate.getMinutes()}:00.000+09:00`
+    const whenstart = `${newDate.getFullYear()}-${newDate.getMonth() + 1 < 10 ? `0${newDate.getMonth() + 1}` : newDate.getMonth() + 1}-${newDate.getDate() < 10 ? `0${newDate.getDate()}` : newDate.getDate()}T${newDate.getHours() < 10 ? `0${newDate.getHours()}` : newDate.getHours()}:${newDate.getMinutes() < 10 ? `0${newDate.getMinutes()}` : newDate.getMinutes()}:00.000+09:00`
 
     const param = {
       title: newSchedule.title,
@@ -105,7 +104,6 @@ const CreateSchedule: FC<CreateScheduleProps> = ({goBack, fetch}) => {
   };
 
   const handleImageChange = (imageList: ImageListType, addUpdateIndex: number[] | undefined) => {
-    console.log(imageList, addUpdateIndex);
     setImages(imageList as never[]);
   };
 

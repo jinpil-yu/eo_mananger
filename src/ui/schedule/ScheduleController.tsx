@@ -6,12 +6,15 @@ import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import EditIcon from "@mui/icons-material/Edit";
 import {Schedule} from "../../data/model/schedule";
-import ScheduleListComponent from "./ScheduleListComponent";
-import ScheduleDetail from "./ScheduleDetail";
-import ScheduleCreate from "./CreateSchedule";
-import {child, getDatabase, ref, remove} from "firebase/database";
 import {Menu} from "../dashboard/DashboardController";
+import ScheduleList from "./screen/ScheduleList";
+import ScheduleDetail from "./screen/ScheduleDetail";
+import ScheduleCreate from "./screen/CreateSchedule";
+import {child, getDatabase, ref, remove} from "firebase/database";
+import NoticeEdit from "../notice/screen/NoticeEdit";
+import ScheduleEdit from "./screen/ScheduleEdit";
 
 interface ScheduleControllerProps {
   data: Schedule[]
@@ -35,6 +38,10 @@ const ScheduleController: FC<ScheduleControllerProps> = ({data, fetch}) => {
     setDepth('create')
   }
 
+  function onClickEdit() {
+    setDepth('edit')
+  }
+
   function onClickDelete() {
     const db = getDatabase();
     const dbRef = ref(db)
@@ -42,8 +49,6 @@ const ScheduleController: FC<ScheduleControllerProps> = ({data, fetch}) => {
     if (!selected) {
       return alert('일정을 삭제할 수 없습니다. 새로고침 후에 다시 시도해주세요.')
     }
-
-    console.log(selected)
 
     remove(child(dbRef, `schedules/${selected.uid}`))
       .then(() => {
@@ -59,9 +64,10 @@ const ScheduleController: FC<ScheduleControllerProps> = ({data, fetch}) => {
 
   function contentsProvider() {
     switch (depth) {
-      case 'list': return <ScheduleListComponent data={data} onClickRow={onClickRow}/>
+      case 'list': return <ScheduleList data={data} onClickRow={onClickRow}/>
       case 'specific': return <ScheduleDetail data={selected!} goBack={goFirst}/>
       case 'create': return <ScheduleCreate goBack={goFirst} fetch={fetch}/>
+      case 'edit': return <ScheduleEdit data={selected!} goBack={goFirst} fetch={fetch} />
     }
   }
 
@@ -81,14 +87,15 @@ const ScheduleController: FC<ScheduleControllerProps> = ({data, fetch}) => {
       case 'specific':
         return (
           <>
-            {/*<Button*/}
-            {/*  sx={{mr: 1}}*/}
-            {/*  startIcon={<EditIcon/>}*/}
-            {/*  type="submit"*/}
-            {/*  variant="contained"*/}
-            {/*>*/}
-            {/*  수정*/}
-            {/*</Button>*/}
+            <Button
+              sx={{mr: 1}}
+              startIcon={<EditIcon/>}
+              type="submit"
+              variant="contained"
+              onClick={onClickEdit}
+            >
+              수정
+            </Button>
             <Button
               color={'error'}
               startIcon={<DeleteIcon/>}

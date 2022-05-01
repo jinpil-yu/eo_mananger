@@ -3,7 +3,7 @@ import React from "react";
 import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 import {format} from "date-fns";
 import {getDatabase, get, ref, set} from "firebase/database";
-import {Menu} from "../dashboard/DashboardController";
+import {Menu} from "../../dashboard/DashboardController";
 
 interface CSVInput {
   address: string
@@ -33,8 +33,8 @@ interface CSVInput {
 
 const DumpSignIn = () => {
   function handleCSV(data: any[], fileInfo: IFileInfo) {
-    const users: CSVInput[] = data
-    const signInErrList: CSVInput[] = []
+      const users: CSVInput[] = data
+      const signInErrList: CSVInput[] = []
 
     // users.find((item, index) => {
     //   const param: any = {

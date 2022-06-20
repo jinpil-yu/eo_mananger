@@ -79,7 +79,7 @@ const MemberSpecific: FC<MemberSpecificProps> = ({uid, data, goBack}) => {
           <TableCell width={500} align={'center'}>{data.address ? data.address : "-" }</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell variant="head">이메일&nbsp;</TableCell>
+          <TableCell variant="head">이메일 (로그인 이메일과 다를 수 있음)&nbsp;</TableCell>
           <TableCell width={500} align={'center'}>{data.email ? data.email : "-" }</TableCell>
         </TableRow>
         <TableRow>
